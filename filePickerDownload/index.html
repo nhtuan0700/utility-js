@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save Image Example</title>
+</head>
+
+<body>
+
+  <input type="file" accept="image/*" id="imageInput">
+  <button onclick="saveImage()">Download</button>
+
+  <script>
+    async function saveImage() {
+      try {
+        // Get the selected file from the input element
+        const imageInput = document.getElementById('imageInput')
+        const file = imageInput.files[0]
+        console.log(file)
+        if (!file) {
+          console.error('No image selected.')
+          return
+        }
+        const e = {
+          types: [{
+            description: file.name,
+            accept: {
+              [file.type]: [`.${file.name.split('.').pop()}`]
+            }
+          }]
+        }
+        // Request the user to choose a file location to save
+        const fileHandle = await window.showSaveFilePicker(e)
+        // Create a writable stream to the selected file
+        const writable = await fileHandle.createWritable()
+        // Read the image file and write its data to the selected file
+        await writable.write(file)
+        // Close the writable stream to save changes
+        await writable.close()
+      } catch (err) {
+        console.error('Error saving image:', err)
+      }
+    }
+  </script>
+
+</body>
+
+</html>
